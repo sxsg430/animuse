@@ -11,7 +11,28 @@ router.get('/:show', function(req, res, next) {
     secret: process.env.SPOTIFY_SECRET
   });
   let maldat = mal.findAnime(req.params['show'])
-  .then(info => res.json(info))
+  .then(info => {
+    let finalJson = {
+      showInfo: {
+        mal_id: info.mal_id,
+        mal_url: info.url,
+        title: info.title,
+        cover: info.image_url,
+        media_type: info.type,
+        origin: info.source,
+        epcount: info.episodes,
+        status: info.status,
+        airing: info.airing,
+        airdate: info.aired.string,
+        description: info.synopsis,
+        music: {
+          opening: info.opening_themes,
+          ending: info.ending_themes,
+        }
+      },
+    }
+    res.json(finalJson);
+  })
   .catch(err => res.send(err));
 });
 
