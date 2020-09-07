@@ -4,15 +4,13 @@ const Jikan = require('jikan-node');
 const Spotify = require('node-spotify-api');
 
 /* GET home page. */
-router.get('/:show', function(req, res, next) {
+router.get('/:show', async (req, res, next) => {
   const mal = new Jikan();
-  var spotify = new Spotify({
-    id: process.env.SPOTIFY_CLIENT,
-    secret: process.env.SPOTIFY_SECRET
-  });
+
   let maldat = mal.findAnime(req.params['show'])
   .then(info => {
     let finalJson = {
+      response: "N/A",
       showInfo: {
         mal_id: info.mal_id,
         mal_url: info.url,
@@ -32,8 +30,7 @@ router.get('/:show', function(req, res, next) {
       },
     }
     res.json(finalJson);
-  })
-  .catch(err => res.send(err));
+  })  
 });
 
 module.exports = router;
