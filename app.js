@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dataRouter = require('./routes/data');
 var spotifyRouter = require('./routes/spotify');
+var discogsRouter = require('./routes/discogs');
 
 var app = express();
 
@@ -25,6 +26,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/showdata', dataRouter);
 app.use('/spotifyreq', spotifyRouter);
+app.use('/discogsreq', discogsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
