@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 const Jikan = require('jikan-node');
-const Spotify = require('node-spotify-api');
 
 /* GET home page. */
 router.get('/:show', async (req, res, next) => {
@@ -30,7 +29,13 @@ router.get('/:show', async (req, res, next) => {
       },
     }
     res.json(finalJson);
-  })  
+  })
+  .catch(info => {
+    let finalJson = {
+      response: info,
+    }
+    res.json(finalJson);
+  })
 });
 
 module.exports = router;
