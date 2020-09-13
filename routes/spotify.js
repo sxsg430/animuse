@@ -10,14 +10,25 @@ router.get('/:song', function(req, res, next) {
   });
   let cleanupSongString = function(songStr) {
     let finalStr = songStr.split(' by ')[0].replace('\"', '').replace('\"', '').replace(')', '').split(' (');
-    return finalStr;
+    let artistStr = songStr.split(' by ')[1].replace(')', '').split(' (');
+    //.replace('\"', '').replace('\"', '').replace(')', '').split('and').split(' (')[0];
+    let artistArr = songStr.split(' by ')[1].split(' (');
+    let out = finalStr.map((songname) => {
+      if (artistArr.length > 2) {
+        return songname + " " + artistStr[1];
+      } else {
+        return songname + " " + artistStr[0];
+      }
+      
+    });
+    console.log(out);
+    return out;
   }
-
-  spotify.search({type: 'track', query: req.params['song']})
+  spotify.search({type: 'track', query: cleanupSongString(req.params['song'])[0]})
   .then((data) => {
-    try {
+    if (data['tracks'].items.length > 0) { // If array of tracks is length of 0, assume no matches and return error message.
       return res.json(data['tracks']['items'][0]['uri']);
-    } catch {
+    } else {
       return res.json("FAILED");
     }
   })

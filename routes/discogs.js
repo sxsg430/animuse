@@ -11,14 +11,50 @@ router.get('/', function(req, res, next) {
 
   let cleanupSongString = function(songStr) {
     let finalStr = songStr.split(' by ')[0].replace('\"', '').replace('\"', '').replace(')', '').split(' (');
-    return finalStr;
+    let artistStr = songStr.split(' by ')[1].replace(')', '').split(' (');
+    //.replace('\"', '').replace('\"', '').replace(')', '').split('and').split(' (')[0];
+    let artistArr = songStr.split(' by ')[1].split(' (');
+    let out = finalStr.map((songname) => {
+      if (artistArr.length > 2) {
+        return [songname, artistStr[1]];
+      } else {
+        return [songname, artistStr[0]];
+      }
+      
+    });
+    return out;
   }
-  let query = {query: req.query.song, artist: req.query.artist, type: 'release', country: 'Japan', year: req.query.year};
-  
+
+  let stripInfo = cleanupSongString(req.query.song);
+  console.log(stripInfo);
+  if (stripInfo.length > 1) {
+    var songTitle = stripInfo[1][0];
+    var songArtist = stripInfo[1][1];
+  } else {
+    var songTitle = stripInfo[0][0];
+    var songArtist = stripInfo[0][1];
+  }
+  let query = {query: songTitle, artist: songArtist, type: 'release', country: 'Japan', year: req.query.year};
+  let queryNoArtist = {query: songTitle, type: 'release', country: 'Japan'};
+
+
   // NOTE: Assumes all songs originated from Japan
   discogs.searchDatabase(query)
   .then((data) => {
-    res.json(data);
+    if (data.results.length > 0) {
+      return res.json(data['results'][0])
+    } else {
+      discogs.searchDatabase(queryNoArtist)
+      .then((data) => {
+        if (data.results.length > 0) {
+          return res.json(data['results'][0])
+        } else {
+          return res.json("ERROR");
+        }
+      })
+      //return res.json("ERROR");
+    }
+    //res.json(data);
   })
   .catch((err) => {
     res.json(err);
