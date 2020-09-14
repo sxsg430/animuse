@@ -19,9 +19,9 @@ router.get('/', function(req, res, next) {
         return songname + " " + artistStr[1];
       } else {
         return songname + " " + artistStr[0];
-      }
+      }});
       return out;
-    });
+    ;
   } catch {
     return res.json("FAILED");
   }

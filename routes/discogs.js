@@ -25,6 +25,8 @@ router.get('/', function(req, res, next) {
     });
     return out;
   }
+  let query = {};
+  let queryNoArtist = {};
   try {
     let stripInfo = cleanupSongString(req.query.song);
     if (stripInfo.length > 1) {
@@ -34,8 +36,8 @@ router.get('/', function(req, res, next) {
       var songTitle = stripInfo[0][0];
       var songArtist = stripInfo[0][1];
     }
-    let query = {query: songTitle, artist: songArtist, type: 'release', country: 'Japan', year: req.query.year};
-    let queryNoArtist = {query: songTitle, type: 'release', country: 'Japan'};
+     query = {query: songTitle, artist: songArtist, type: 'release', country: 'Japan', year: req.query.year};
+     queryNoArtist = {query: songTitle, type: 'release', country: 'Japan'};
   } catch {
     return res.json("ERROR");
   }
