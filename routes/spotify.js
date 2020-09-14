@@ -9,20 +9,22 @@ router.get('/', function(req, res, next) {
     secret: process.env.SPOTIFY_SECRET
   });
   let cleanupSongString = function(songStr) {
-    let reg = /^\d:\s/gi;
-    let finalStr = songStr.split(' by ')[0].replace(reg, '').replace('\"', '').replace('\"', '').replace(')', '').split(' (');
-    let artistStr = songStr.split(' by ')[1].replace(')', '').split(' (');
-    //.replace('\"', '').replace('\"', '').replace(')', '').split('and').split(' (')[0];
-    let artistArr = songStr.split(' by ')[1].split(' (');
-    let out = finalStr.map((songname) => {
+    try {
+      let reg = /^\d:\s/gi;
+      let finalStr = songStr.split(' by ')[0].replace(reg, '').replace('\"', '').replace('\"', '').replace(')', '').split(' (');
+      let artistStr = songStr.split(' by ')[1].replace(')', '').split(' (');
+      let artistArr = songStr.split(' by ')[1].split(' (');
+      let out = finalStr.map((songname) => {
       if (artistArr.length > 2) {
         return songname + " " + artistStr[1];
       } else {
         return songname + " " + artistStr[0];
       }
-      
+      return out;
     });
-    return out;
+  } catch {
+    return res.json("FAILED");
+  }
   }
   spotify.search({type: 'track', query: cleanupSongString(req.query.song)[0]})
   .then((data) => {
@@ -43,6 +45,9 @@ router.get('/', function(req, res, next) {
       }
       
     }
+  })
+  .catch((err) => {
+    return res.json("FAILED");
   })
 });
 

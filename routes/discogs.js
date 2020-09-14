@@ -10,7 +10,8 @@ router.get('/', function(req, res, next) {
   });
 
   let cleanupSongString = function(songStr) {
-    let finalStr = songStr.split(' by ')[0].replace('\"', '').replace('\"', '').replace(')', '').split(' (');
+    let reg = /^\d:\s/gi;
+    let finalStr = songStr.split(' by ')[0].replace(reg, '').replace('\"', '').replace('\"', '').replace(')', '').split(' (');
     let artistStr = songStr.split(' by ')[1].replace(')', '').split(' (');
     //.replace('\"', '').replace('\"', '').replace(')', '').split('and').split(' (')[0];
     let artistArr = songStr.split(' by ')[1].split(' (');
@@ -24,18 +25,21 @@ router.get('/', function(req, res, next) {
     });
     return out;
   }
-
-  let stripInfo = cleanupSongString(req.query.song);
-  console.log(stripInfo);
-  if (stripInfo.length > 1) {
-    var songTitle = stripInfo[1][0];
-    var songArtist = stripInfo[1][1];
-  } else {
-    var songTitle = stripInfo[0][0];
-    var songArtist = stripInfo[0][1];
+  try {
+    let stripInfo = cleanupSongString(req.query.song);
+    if (stripInfo.length > 1) {
+      var songTitle = stripInfo[1][0];
+      var songArtist = stripInfo[1][1];
+    } else {
+      var songTitle = stripInfo[0][0];
+      var songArtist = stripInfo[0][1];
+    }
+    let query = {query: songTitle, artist: songArtist, type: 'release', country: 'Japan', year: req.query.year};
+    let queryNoArtist = {query: songTitle, type: 'release', country: 'Japan'};
+  } catch {
+    return res.json("ERROR");
   }
-  let query = {query: songTitle, artist: songArtist, type: 'release', country: 'Japan', year: req.query.year};
-  let queryNoArtist = {query: songTitle, type: 'release', country: 'Japan'};
+  
 
 
   // NOTE: Assumes all songs originated from Japan
@@ -57,7 +61,7 @@ router.get('/', function(req, res, next) {
     //res.json(data);
   })
   .catch((err) => {
-    res.json(err);
+    return res.json("ERROR");
   })
 });
 
