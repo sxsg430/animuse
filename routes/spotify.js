@@ -22,7 +22,6 @@ router.get('/', function(req, res, next) {
       }
       
     });
-    console.log(out);
     return out;
   }
   spotify.search({type: 'track', query: cleanupSongString(req.query.song)[0]})
@@ -30,7 +29,19 @@ router.get('/', function(req, res, next) {
     if (data['tracks'].items.length > 0) { // If array of tracks is length of 0, assume no matches and return error message.
       return res.json(data['tracks']['items'][0]['uri']);
     } else {
-      return res.json("FAILED");
+      if (cleanupSongString(req.query.song).length > 1) {
+        spotify.search({type: 'track', query: cleanupSongString(req.query.song)[1]})
+      .then((data) =>{
+        if (data['tracks'].items.length > 0) {
+          return res.json(data['tracks']['items'][0]['uri']);
+        } else {
+          return res.json("FAILED");
+        }
+      })
+      } else {
+        return res.json("FAILED");
+      }
+      
     }
   })
 });
