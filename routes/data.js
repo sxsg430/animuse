@@ -32,7 +32,7 @@ router.get('/:show', async (req, res, next) => {
   })
   .catch(info => {
     let finalJson = {
-      response: info,
+      response: "ERROR",
     }
     res.json(finalJson);
   })

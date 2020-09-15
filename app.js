@@ -19,7 +19,7 @@ app.use(cors())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
+app.use(express.static('../animuse-client/build'))
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -37,6 +37,9 @@ app.use('/search', searchRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+//app.use((req, res) => {
+//  res.sendFile(path.join(__dirname, '../animuse-client/build', 'index.html'));
+//})
 
 // error handler
 app.use(function(err, req, res, next) {
