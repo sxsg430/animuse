@@ -4,10 +4,13 @@ const Jikan = require('jikan-node');
 
 /* GET home page. */
 router.get('/:show', async (req, res, next) => {
+  // Create Jikan variable
   const mal = new Jikan();
 
+  // Use Jikan's search function to find information about the show ID passed in from the URL
   let maldat = mal.findAnime(req.params['show'])
   .then(info => {
+    // If Successful, return custom JSON containing the necessary variables
     let finalJson = {
       response: "N/A",
       showInfo: {
@@ -31,6 +34,7 @@ router.get('/:show', async (req, res, next) => {
     res.json(finalJson);
   })
   .catch(info => {
+    // Otherwise, catch and return a default error code.
     let finalJson = {
       response: "ERROR",
     }
